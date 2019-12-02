@@ -49,13 +49,13 @@ const createPostForUser = async (authorId, data) => {
   );
   return post;
 };
-updatePostForUser("ck3mq8hpm004o07aje79mmm", {
-  title: "updated tekken",
-  published: false,
-  body: "I am back son"
-})
-  .then(user => console.log(JSON.stringify(user, undefined, 2)))
-  .catch(err => console.log(err.message));
+// updatePostForUser("ck3mq8hpm004o07aje79mmm", {
+//   title: "updated tekken",
+//   published: false,
+//   body: "I am back son"
+// })
+//   .then(user => console.log(JSON.stringify(user, undefined, 2)))
+//   .catch(err => console.log(err.message));
 
 // createPostForUser("ck3mbz84x001107c4rpx3", {
 //   title: "tekken 9",
