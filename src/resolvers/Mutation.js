@@ -41,23 +41,25 @@ const Mutation = {
       token: jwt.sign({ userId: user.id }, "secret")
     };
   },
-  async deleteUser(parent, args, { prisma }, info) {
-    const userExists = await prisma.exists.User({ id: args.id });
+  async deleteUser(parent, args, { prisma, req }, info) {
+    const userId = getUserId(req);
+    const userExists = await prisma.exists.User({ id: userId });
     if (!userExists) {
       throw new Error("User doesn't exists");
     }
     return prisma.mutation.deleteUser(
       {
         where: {
-          id: args.id
+          id: userId
         }
       },
       info
     );
   },
-  async updateUser(parent, args, { prisma }, info) {
+  async updateUser(parent, args, { prisma, req }, info) {
+    const userId = getUserId(req);
     return prisma.mutation.updateUser(
-      { data: { ...args.data }, where: { id: args.id } },
+      { data: { ...args.data }, where: { id: userId } },
       info
     );
   },
@@ -85,10 +87,17 @@ const Mutation = {
       info
     );
   },
-  async deletePost(parent, args, { prisma, pubsub }, info) {
-    const postExists = prisma.exists.Post({ id: args.id });
+  async deletePost(parent, args, { prisma, req }, info) {
+    const userId = getUserId(req);
+    const postExists = await prisma.exists.Post({
+      id: args.id,
+      author: {
+        id: userId
+      }
+    });
+
     if (!postExists) {
-      throw new Error("Post doesn't exist");
+      throw new Error("Unable to delete Post");
     }
     return prisma.mutation.deletePost(
       {

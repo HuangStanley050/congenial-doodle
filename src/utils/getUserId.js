@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 export const getUserId = req => {
   const header = req.request.headers.authorization;
-  console.log(req);
+
   if (!header) {
     throw new Error("Authentication required");
   }
