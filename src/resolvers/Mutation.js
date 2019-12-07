@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { getUserId } from "../utils/getUserId";
 
 const Mutation = {
   async login(parent, args, { prisma }, info) {
@@ -60,7 +61,9 @@ const Mutation = {
       info
     );
   },
-  async createPost(parent, args, { prisma, pubsub }, info) {
+  async createPost(parent, args, { prisma, req }, info) {
+    const userId = getUserId(req);
+
     const userExists = await prisma.exists.User({ id: args.data.author });
     if (!userExists) {
       throw new Error("User doesn't exists");
@@ -74,7 +77,7 @@ const Mutation = {
           published: args.data.published,
           author: {
             connect: {
-              id: args.data.author
+              id: userId
             }
           }
         }
