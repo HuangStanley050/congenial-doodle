@@ -18,13 +18,35 @@ const Query = {
 
     return prisma.query.users(opArgs, info);
   },
+  myPosts(parent, args, { prisma, req }, info) {
+    const userId = getUserId(req);
+    const opArgs = {
+      where: {
+        author: {
+          id: userId
+        }
+      }
+    };
+    if (args.query) {
+      opArgs.where.OR = [
+        { title_contains: args.query },
+        { body_contains: args.query }
+      ];
+    }
+    return prisma.query.posts(opArgs, info);
+  },
   posts(parent, args, { prisma }, info) {
-    const opArgs = {};
+    const opArgs = {
+      where: {
+        published: true
+      }
+    };
 
     if (args.query) {
-      opArgs.where = {
-        OR: [{ title_contains: args.query }, { body_contains: args.query }]
-      };
+      opArgs.where.OR = [
+        { title_contains: args.query },
+        { body_contains: args.query }
+      ];
     }
 
     return prisma.query.posts(opArgs, info);
@@ -32,7 +54,7 @@ const Query = {
   comments(parent, args, { prisma }, info) {
     return prisma.query.comments(null, info);
   },
-  async me(parent, args, { prisma, req }, info) {
+  me(parent, args, { prisma, req }, info) {
     const userId = getUserId(req);
     return prisma.query.user({ where: { id: userId } }, info);
   },
