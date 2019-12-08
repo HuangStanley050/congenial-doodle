@@ -32,12 +32,9 @@ const Query = {
   comments(parent, args, { prisma }, info) {
     return prisma.query.comments(null, info);
   },
-  me() {
-    return {
-      id: "123098",
-      name: "Mike",
-      email: "mike@example.com"
-    };
+  async me(parent, args, { prisma, req }, info) {
+    const userId = getUserId(req);
+    return prisma.query.user({ where: { id: userId } }, info);
   },
   async post(parent, args, { prisma, req }, info) {
     const userId = getUserId(req, false);
